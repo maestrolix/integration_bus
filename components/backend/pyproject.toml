@@ -1,0 +1,6 @@
+[tool.isort]
+profile = "black"
+known_first_party = ["ssd_libs"]
+known_local_folder = ["integration_bus"]
+sections=["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+line_length = 100

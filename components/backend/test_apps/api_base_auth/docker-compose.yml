@@ -1,0 +1,13 @@
+version: '3'
+
+services:        
+  base-auth-api:
+    container_name: base-auth-api
+    build: .
+    ports:
+      - 3002:8002
+    environment:
+      - BASIC_AUTH_USERNAME=user
+      - BASIC_AUTH_PASSWORD=password
+      - TEST_API_HOST=0.0.0.0
+      - TEST_API_PORT=8002

@@ -1,0 +1,54 @@
+version: '3.3'
+
+services:
+  api-fastapi_example:
+    container_name: api-fastapi_example
+    hostname: fastapi_api
+    expose:
+      - 5002
+    build:
+      context: ../../
+      dockerfile: ./deployment/backend/Dockerfile
+    command: ['entrypoint_api_prod.sh']
+    environment: 
+      - DATABASE=postgres
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASS=${DATABASE_PASS}
+      - DATABASE_DEBUG=${DATABASE_DEBUG}
+
+      - APP_IS_DEBUG=${APP_IS_DEBUG}
+      - APP_SWAGGER_ON=${APP_SWAGGER_ON}
+      - APP_VERSION=${APP_VERSION}
+      - APP_TITLE=${APP_TITLE}
+      - APP_LOGGING_LEVEL=${APP_LOGGING_LEVEL}
+      
+      - LOGGING_LEVEL=${LOGGING_LEVEL}
+      - LOGGING_JSON=${LOGGING_JSON}
+
+    depends_on: 
+      - postgres-fastapi_example
+
+  postgres-fastapi_example:
+    image: postgres:12.3
+    hostname: postgres_fastapi
+    container_name: postgres-fastapi_example
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASS}
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - /var/pg/fastapi_example:/var/lib/postgresql/data
+    expose:
+      - 5432
+
+  nginx-fastapi_example:
+    build: ../nginx
+    container_name: nginx-fastapi_example
+    ports:  
+      - '5002:1337'
+    depends_on:
+      - api-fastapi_example
